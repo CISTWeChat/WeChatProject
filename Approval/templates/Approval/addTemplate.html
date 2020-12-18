@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>register_result</title>
+    <style type="text/css">
+        table.table1{
+            background-color: #E6E6FA;
+            position: fixed;
+            height: 290px;
+            top: 200px;
+            left: 600px;
+            width: 300px;
+            bottom: 0px;
+            }
+        form.form1{
+            position: fixed;
+            top: 200px;
+            height: 260px;
+            left: 625px;
+            }
+        input.in1,input.in2,input.in3{
+            position: fixed;
+            width: 250px;
+            }
+        input.in4{
+            position: fixed;
+            width: 50px;
+            left: 825px;
+            }
+        input.in5{
+            position: fixed;
+            top: 430px;
+            width: 50px;
+            left: 825px;
+            }
+        p.p1{
+            position: fixed;
+            top: 450px;
+            left: 630px;
+            height: 8px;
+            }
+    </style>
+</head>
+<body>
+    <table class="table1" border="1">
+        <tr>
+
+        </tr>
+    </table>
+    <form class="form1" action="/Approval/saveTemplateID/" method="post">
+        {% csrf_token %}
+        <p>请填写下列信息：</p>
+        模板名
+        <br>
+        <input class="in1" type="text" name="t_name" required="required"/>
+        <br>
+        ID：
+        <br>
+        <input class="in2" type="text" name="t_ID" required="required"/>
+        <br>
+        简介
+        <br>
+        <input class="in3" type="password" name="t_message" required="required"/>
+        <br><br>
+        <input class="in4" type="submit" value="提交"/>
+        <p style="color: red;">{{content}}</p>
+    </form>
+
+</body>
+</html>
