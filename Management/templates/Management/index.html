@@ -41,7 +41,7 @@
                             <label>
                                 <i class="iconfont icondianzidaping" style="color: aliceblue;"></i>
                                 <span>审批</span>
-                                <a id="showTemplateID" href="javascript:;"></a>
+                                <a id="showApproval" href="javascript:;"></a>
                             </label>
 
                         </li>
@@ -79,11 +79,12 @@
         <!-- 右侧内容 -->
         <div class="body_right" id="content">
         </div>
+    
     </div>
-
-
     <script src="{% static 'js/jquery-3.3.1.min.js' %}"></script>
     <script src="{% static 'static_management/js/index.js' %}"></script>
+    <script src = "{% static 'js/bootstrap.min.js' %}"></script>
+
     <script>
         // 退出登录
         function logout(){
@@ -103,14 +104,15 @@
             var app_path = app_id + ".html";
             console.log(app_id,app_path);
             $.ajax({
-                url:'/Approval/'+app_id+'/',
+                url:'/Management/'+app_id+'/',
                 // dataType:'html',
                 success:function(data){
                     console.log(data);
-                    $("#content").show().html(data);
+                    $("#content").show().html(data);    // 显示模板内容
                 }
             })
         });
+        
     </script>
 </body>
 </html>

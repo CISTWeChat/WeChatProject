@@ -45,7 +45,7 @@
             //组装json:ans.apply_data.contents[]
             ans.apply_data.contents = [];
             $.ajax({
-<!--                    url: 'http://121.195.153.139:8000/getTemplate/',-->
+                    // url: 'http://121.195.153.139:8000/getTemplate/',
                     url: '/Approval/getTemplate/',
                     type: "GET",
                     dataType: "json",
@@ -118,7 +118,7 @@
                 type: "POST",
                 dataType: "json",
                 url: "/Approval/submitTemplate/",
-<!--                url: "http://127.0.0.1:8000/Approval/submitTemplate/",-->
+                // url: "http://127.0.0.1:8000/Approval/submitTemplate/",
                 //contentType : "application/json",
                 contentType : "application/x-www-form-urlencoded",
                 async:false,
@@ -128,10 +128,10 @@
                     //window.location.href="./test.html";
                     alert("审批提交成功");
                 }
-<!--                error : function() {-->
-<!--                    //window.location.href="./test.html";-->
-<!--                    alert("post error");-->
-<!--                }-->
+                // error : function() {
+                //     //window.location.href="./test.html";
+                //     alert("post error");
+                // }
             });
         }
 
@@ -144,7 +144,7 @@
              var errcode;
              $(document).ready(function () {
                 $.ajax({
-<!--                    url: 'http://121.195.153.139:8000/getTemplate/',-->
+                    // url: 'http://121.195.153.139:8000/getTemplate/',
                     //url:'http://cistw.buct.edu.cn/template',
                     url: '/Approval/getTemplate/',
                     type: "GET",
@@ -196,11 +196,11 @@
             });
         })
 
-<!--        获取code-->
+        // 获取code
         function getCode(){
             //var url = 'code=qD_dYGV6jKMCKYIrPZnEBFu7RgWVhgAVkTh6akzpH8A&state=STATE';
             var code = document.getElementById("code");
-<!--            $("#code").text(getQueryVariable("code"));-->
+            // $("#code").text(getQueryVariable("code"));-
             var codeValue = getQueryVariable("code")
             $.ajax({
                 type: "GET",
@@ -208,9 +208,8 @@
                 url: "/Approval/getUserId/",
                 data: { code: codeValue },
                 success: function(msg){
-                    msgObj = eval("(" + msg + ")");
-
-<!--                    alert(msgObj.UserId);-->
+                    // msgObj = eval("(" + msg + ")");
+                    // alert(msgObj.UserId);
                 }
             });
 
@@ -232,6 +231,7 @@
         }
     </script>
 </head>
+
 <body onload="getCode()">
 <!--    <div><a>code:</a><span id="code"></span></div>-->
     <div class="wrapper wrapper-content animated fadeInUp">

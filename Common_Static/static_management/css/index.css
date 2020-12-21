@@ -98,7 +98,7 @@ textarea {
 }
 .body_con{
     width: 100%;
-    height: 100%;
+    height:auto;
     position: relative;
     font-size: 0;
 }

@@ -1,6 +1,7 @@
 from django.shortcuts import render,redirect
 from django.http import JsonResponse,HttpResponse
 from Management.models import User
+from Approval.models import TemplateId
 
 # 验证登录
 def login(request):
@@ -38,9 +39,37 @@ def index(request):
 
 # 审批
 def showApproval(request):
-    return render(request,'Management/showApproval.html')
+    id_list = TemplateId.objects.all()      # 获取所有模板数据
+
+    content = str('<div class=\"container\" style=\"margin-top: 10px; margin-left: 10px;\">\n'
+            + '\t<table class=\"table table-striped\" style=\"width: 200px;\">\n'
+            + '\t\t<thead style=\"font-weight:bold; line-height: 50px;\">\n'
+            + '\t\t\t<td>Name</td>\n'
+            + '\t\t\t<td>Action</td>\n'
+            + '\t\t</thead>\n'
+            + '\t\t<tr style=\"line-height: 20px;\">\n')
+
+    for t_id in id_list:
+        name = '\t\t\t<td>' + t_id.name + '</td>\n'
+        action = '\t\t\t<td><a href=\"/Approval/show/'+ t_id.ID +'\">show</a></td>\n'
+        content += name
+        content += action
     
+    content += str('\t\t</tr>\n'
+            + '\t</table>\n'
+            + '</div>')
+    return HttpResponse(content)
 
 # 信息采集
 def showInfo(request):
-    return render(request,'Management/showInfo.html')
+    content = str('<div class=\"container\" style=\"margin-top: 10px; margin-left: 10px;\">\n'
+            + '\t<table class=\"table table-striped\" style=\"width: 200px;\">\n'
+            + '\t\t<thead style=\"font-weight:bold; line-height: 50px;\">\n'
+            + '\t\t\t<td>信息采集</td>\n'
+            + '\t\t</thead>\n'
+            + '\t\t<tr style=\"line-height: 20px;\">\n'
+            + '\t\t</tr>\n'
+            + '\t</table>\n'
+            + '</div>')
+
+    return HttpResponse(content)
