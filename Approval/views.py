@@ -66,25 +66,6 @@ def showTemplateID(request):
     id_list = TemplateId.objects.all()
     return render(request, 'Approval/showTemplate.html',{'id_list': id_list})
 
-def addTemplateID(request):
-    return render(request, 'Approval/addTemplate.html')
-
-def saveTemplateID(request):
-    a = request.POST
-    t_name = a['t_name']
-    t_ID = a['t_ID']
-    t_message = a['t_message']
-    id = TemplateId.objects.filter(ID=t_ID).first()
-    if id is None:
-        id = TemplateId()
-        id.ID = t_ID
-        id.name = t_name
-        id.message = t_message
-        id.save()
-        return render(request,'Approval/main.html')
-    else:
-        return render(request,'Approval/addTemplate.html',{"content":"此模板已存在，请勿提交"})
-
 def getUserId(request):
     code = request.GET.get('code')
     requestURL = 'https://qyapi.weixin.qq.com/cgi-bin/user/getuserinfo?access_token=ACCESS_TOKEN'.replace("ACCESS_TOKEN", getAccessToken.getToken())
