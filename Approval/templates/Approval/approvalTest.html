@@ -33,14 +33,7 @@
         //将form表单的内容封装成标准json
         function GetJson(){
             var ans = {};
-            //ans.creator_userid = "";
-            //ans.template_id = "";
-            //ans.use_template_approver = "";
-            //ans.approver = [];
-            //ans.notifyer = [];
-            //ans.notify_type = [];
             ans.apply_data = {};
-            //ans.summary_list = [];
             //ajax重复访问模板接口，获取模板中元素数据
             //组装json:ans.apply_data.contents[]
             ans.apply_data.contents = [];
@@ -67,10 +60,8 @@
                                     i.lang = values.property.title[0].lang;
                                     content.title.push(i);
                                     content.value = {};
-                                    //content.value.text = "文本填写的内容-测试";
                                     var s = "#" + values.property.id;
                                     content.value.text = $(s).val();
-                                    //alert($(s).val());
                                     console.log(s);
                                     ans.apply_data.contents.push(content);
                                     console.log(ans);
@@ -90,14 +81,51 @@
                                         content.value.type = "single";
                                         content.value.options = [];
                                         var keys = {};
-                                        var s = "#" + values.property.id;
+                                        var s = "input[name="+ values.property.id +"]:checked";
                                         keys.key = $(s).val();
                                         content.value.options.push(keys);
                                         ans.apply_data.contents.push(content);
                                     }else{
                                         //复选框
+                                        var content = {};
+                                        content.control = "Selector";
+                                        content.id = values.property.id;
+                                        content.title = [];
+                                        var i = {};
+                                        i.text = values.property.title[0].text;
+                                        i.lang = values.property.title[0].lang;
+                                        content.title.push(i);
+                                        content.value = {};
+                                        content.value.type = "multi";
+                                        content.value.options = [];
+                                        //var keys = {};
+                                        var s = "input[name="+ values.property.id +"]:checked";
+                                        $(s).each(function(){
+                                            var keys = {};
+                                            keys.key = $(this).val();
+                                            content.value.options.push(keys);
+                                        })
+                                        //keys.key = $(s).val();
+                                        //content.value.options.push(keys);
+                                        ans.apply_data.contents.push(content);
                                     }
                                     break;
+                                case "Textarea":
+                                    var content = {};
+                                    content.control = "Textarea";
+                                    content.id = values.property.id;
+                                    content.title = [];
+                                    var i = {};
+                                    i.text = values.property.title[0].text;
+                                    i.lang = values.property.title[0].lang;
+                                    content.title.push(i);
+                                    content.value = {};
+                                    var s = "#" + values.property.id;
+                                    content.value.text = $(s).val();
+                                    console.log(s);
+                                    ans.apply_data.contents.push(content);
+                                    console.log(ans);
+                                break;
                             }
                         });
                     },
@@ -126,7 +154,7 @@
                 data: JSON.stringify(GetJson()),
                 success: function (result) {
                     //window.location.href="./test.html";
-                    alert("审批提交成功");
+                    // alert("审批提交成功");
                 }
                 // error : function() {
                 //     //window.location.href="./test.html";
@@ -135,12 +163,28 @@
             });
         }
 
+        function ShowFile(obj){
+            console.log("test");
+            var tmpl = '<li class="weui-uploader__file" style="background-image:url(#url#)"></li>';
+            var src, url = window.URL || window.webkitURL || window.mozURL, files = event.target.files;
+                for (var i = 0, len = files.length; i < len; ++i) {
+                    var file = files[i];
+
+                    if (url) {
+                        src = url.createObjectURL(file);
+                    } else {
+                        src = event.target.result;
+                    }
+                    $(obj).append(tmpl.replace('#url#', src));
+                    console.log(src);
+                    console.log(tmpl);
+                    console.log((tmpl.replace('#url#', src)));
+                }
+        }
+
         //页面加载时渲染前端
         $(function(){
-             //var GRP=GetRequestParameters();
-             //var access_token=GRP['access_token'];
-             //var template_id=GRP['template_id'];
-             //alert(access_token);
+             console.log("页面加载时渲染前端");
              var errcode;
              $(document).ready(function () {
                 $.ajax({
@@ -151,38 +195,67 @@
                     dataType: "json",
                     contentType: "chartset=UTF-8",
                     success: function (data) {
-                        //console.log(data);
                         $(".bottom_div").before("<h1 style=\"text-align:center;color:#6254b2;margin-bottom:25px\">" + data.data.template_names[0].text + "</h1>");
                         $(".bottom_div").before("<div class=\"page\"><div class=\"page__bd\"><form action=\"\" method=\"post\">");
                         var testid =  document.getElementById("testdiv");
                         var testDiv = "";
                         $.each(data.data.template_content.controls, function(index,values){
-
                             //遍历模板控件数组
                             //values表示数组中的元素
                             //property:模板控件属性 config:模板控件配置
-                            //$(".test").before("<div ><p>" + values.property.control + "</p></div>");
-                            //alert(values.property.id);
                             switch(values.property.control){
                                 case "Text":
-                                    //$(".bottom_div").before("<div ><input>" + values.property.control + "</input></div>");
+                                    //普通输入文本框
                                     testDiv = testDiv+"<div class=\"weui-cells__title\">"+ values.property.title[0].text +"</div>";
                                     testDiv = testDiv+"<div class=\"weui-cells\"><div class=\"weui-cell\"><div class=\"weui-cell__bd\"><input class=\"weui-input\" type=\"text\" placeholder=\"请输入\" name = \"" + values.property.id + "\" id = \"" + values.property.id +"\"/></div></div></div>";
                                     break;
                                 case "Selector":
-                                    testDiv = testDiv+"<div class=\"weui-cells weui-cells_radio\">";
-                                    testDiv = testDiv+"<div class=\"weui-cells__title\">" + values.property.title[0].text + "</div>";
                                     if(values.config.selector.type == "single"){
                                         //单选框
-                                        testDiv = testDiv  + "<div class=\"weui-cells\"><div class=\"weui-cell weui-cell_select\"><div class=\"weui-cell__bd\"><select class=\"weui-select\" name=\""+ values.property.id +"\" id=\"" + values.property.id + "\">";
-                                         $.each(values.config.selector.options,function(idx,value) {
-                                             testDiv = testDiv + "<option value=\"" + value.value[0].text + "\">" + value.value[0].text + "</option>";
-                                         });
-                                        testDiv = testDiv + "</select>"
+                                        testDiv = testDiv + "<div class=\"weui-form__control-area\"><div class=\"weui-cells__group weui-cells__group_form\"><div class=\"weui-cells weui-cells_radio\"><div class=\"weui-cells weui-cells_radio\">";
+                                        testDiv = testDiv + "<div class=\"weui-cells__title\">" + values.property.title[0].text + "</div>";
+                                        $.each(values.config.selector.options,function(idx,value) {
+                                            testDiv = testDiv + "<label class=\"weui-cell weui-cell_active weui-check__label\" for=\"" + value.key + "\"><div class=\"weui-cell__bd\">";
+                                            testDiv = testDiv + "<p>" + value.value[0].text + "</p></div>";
+                                            testDiv = testDiv + "<div class=\"weui-cell__ft\">";
+                                            testDiv = testDiv + "<input type=\"radio\" class=\"weui-check\" name=\"" + values.property.id + "\" id=\"" + value.key + "\" value=\"" + value.key +"\"/>";
+                                            testDiv = testDiv + "<span class=\"weui-icon-checked\"></span></div></label>";
+                                        });
+                                        testDiv = testDiv + "</div></div></div>";
                                     }else{
                                         //复选框
+                                        testDiv = testDiv + "<div class=\"weui-form__control-area\"><div class=\"weui-cells__group weui-cells__group_form\"><div class=\"weui-cells weui-cells_checkbox\">";
+                                        testDiv = testDiv+"<div class=\"weui-cells__title\">" + values.property.title[0].text + "</div>";
+                                        $.each(values.config.selector.options,function(idx,value) {
+                                            testDiv = testDiv + "<label class=\"weui-cell weui-cell_active weui-check__label\" for=\"" + value.key + "\">";
+                                            testDiv = testDiv + "<div class=\"weui-cell__hd\">";
+                                            testDiv = testDiv + "<input type=\"checkbox\" class=\"weui-check\" name=\"" + values.property.id + "\" id=\"" + value.key +"\" value=\"" + value.key +"\"/>";
+                                            testDiv = testDiv + "<i class=\"weui-icon-checked\"></i></div>";
+                                            testDiv = testDiv + "<div class=\"weui-cell__bd\">";
+                                            testDiv = testDiv + "<p>" + value.value[0].text + "</p>"
+                                            testDiv = testDiv + "</div></label>";
+                                        });
+                                        testDiv = testDiv + "</div></div></div>";
                                     }
-                                    //$(".bottom_div").before("<div ><p>" + values.property.control + "</p></div>");
+                                    break;
+                                case "Textarea":
+                                    testDiv = testDiv + "<div class=\"weui-cells__title\">"+ values.property.title[0].text +"</div>";
+                                    testDiv = testDiv + "<div class=\"weui-cells weui-cells_form\"><div class=\"weui-cell \"><div class=\"weui-cell__bd\">";
+                                    testDiv = testDiv + "<textarea id=\""+ values.property.id +"\" name=\""+ values.property.id +"\" class=\"weui-textarea\" placeholder=\"请输入\" rows=\"3\"></textarea>"
+                                    testDiv = testDiv + "</div></div></div>";
+                                    break;
+                                case "File":
+                                    testDiv = testDiv + "<div class=\"weui-gallery\" id=\"gallery\"><span class=\"weui-gallery__img\" id=\"galleryImg\"></span><div class=\"weui-gallery__opr\"><a href=\"javascript:\" class=\"weui-gallery__del\"><i class=\"weui-icon-delete weui-icon_gallery-delete\"></i></a></div></div>";
+
+                                    testDiv = testDiv + "<div class=\"weui-cells__title\">"+ values.property.title[0].text +"</div>";
+                                    testDiv = testDiv + "<div class=\"weui-cells weui-cells_form\"><div class=\"weui-cell  weui-cell_uploader\"><div class=\"weui-cell__bd\"><div class=\"weui-uploader\">";
+                                    testDiv = testDiv + "<div class=\"weui-uploader__hd\"><p class=\"weui-cells__title\">" + values.property.placeholder[0].text +"</p></div>"
+                                    testDiv = testDiv + "<div class=\"weui-uploader__bd\">";
+                                    testDiv = testDiv + "<ul class=\"weui-uploader__files\" id=\"SFile" + values.property.id +"\"></ul>";
+                                    console.log("id=\"SFile" + values.property.id +"\"");
+                                    var s = "#SFile" + values.property.id;
+                                    testDiv = testDiv + "<div class=\"weui-uploader__input-box\"><input id=\""+ values.property.id +"\" name=\""+ values.property.id +"\"  class=\"weui-uploader__input\" type=\"file\"  onchange=\"ShowFile($(document.getElementById('SFile" + values.property.id +"')))\"  accept=\"image/*\" multiple/></div></div>";
+                                    testDiv = testDiv + "</div></div></div></div>";
                                     break;
                             }
                         });
@@ -233,17 +306,13 @@
 </head>
 
 <body onload="getCode()">
-<!--    <div><a>code:</a><span id="code"></span></div>-->
     <div class="wrapper wrapper-content animated fadeInUp">
         <div class="page">
             <div class="page__bd">
                 <form  method="post" id="dataForm">
                     {% csrf_token %}
-                    <!--        随便写的action            -->
-<!--                <h1 style="text-align:center;color:#6254b2;margin-bottom:25px">这里是审批测试页面</h1>-->
                     <div class="bottom_div">
                         <div class="page__bd page__bd_spacing">
-
                             <div id="testdiv"></div>
                             <button class="weui-btn weui-btn_primary" type="submit" name="submit_button" value="提交" onclick="SubJson()">提交</button>
                         </div>
@@ -254,5 +323,8 @@
     </div>
 <!--    <script type="text/javascript" src="https://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>-->
 <!--    <script src="https://res.wx.qq.com/open/libs/weuijs/1.0.0/weui.min.js"></script>-->
+    <script type="text/javascript">
+        $(document).ready(console.log("ready"));
+    </script>
 </body>
 </html>
