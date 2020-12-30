@@ -9,14 +9,13 @@ import requests
 def getTemplate(request):
     print("hhhh")
     # 获取审批模板详情
-    # templateId = request.session.get('templateId')
-    templateId = "BsAYLu7PXApNSRuL3veJZmSy34eggwsjq8Xa8dLg5"      # 信息学院新闻发布
+    templateId = request.session.get('templateId')
+    # templateId = "BsAYLu7PXApNSRuL3veJZmSy34eggwsjq8Xa8dLg5"      # 信息学院新闻发布
     # templateId = "Bs7yoCAcbDvcm9SmMRHDAntkdg4zrPsXu7mqLr9rX"        # 审批测试
     temp = {
         'data': getTemplateDetail.getTemplateDetail(templateId)
     }
 
-    #print(temp)
     # 跨域、乱码
     response = JsonResponse(temp, safe=False, json_dumps_params={'ensure_ascii': False})
     response["Access-Control-Allow-Origin"] = "*"
@@ -55,9 +54,9 @@ def submitTemplate(request):
     else:
         return HttpResponse()
 
-def approvalTest(request, templateId='BsAYLu7PXApNSRuL3veJZmSy34eggwsjq8Xa8dLg5'):
-    templateId = "Bs7yoCAcbDvcm9SmMRHDAntkdg4zrPsXu7mqLr9rX"
-    # templateId = request.GET.get('templateId')
+def approvalTest(request, templateId):
+    # templateId = "Bs7yoCAcbDvcm9SmMRHDAntkdg4zrPsXu7mqLr9rX"
+    templateId = TemplateId.objects.get(ID=templateId).ID
     # print("templateId:",templateId)
     request.session['templateId'] = templateId
     return render(request, "Approval/approvalTest.html")
@@ -86,7 +85,3 @@ def getUserId(request):
     else:
         request.session['UserId'] = UserId
         return JsonResponse({'UserId':UserId})
-
-
-
-
